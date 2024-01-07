@@ -35,8 +35,10 @@ int main(int argc, char* argv[]) {
     }
     srand(SDL_GetTicks());
 
+    renderEmptyGrid();
+    SDL_RenderPresent(renderer);
+
     // Programme
-    
     SDL_bool programLaunched = SDL_TRUE;
     while (programLaunched){
         SDL_Event event;
@@ -47,11 +49,20 @@ int main(int argc, char* argv[]) {
             case SDL_QUIT:
                 programLaunched = SDL_FALSE;
                 break;
-            
+            case  SDL_MOUSEBUTTONDOWN:
+            if (event.button.button == SDL_BUTTON_LEFT) {
+
+                renderTile((SDL_Point){event.button.x,event.button.y}, path);
+                printf("yo\n");
+            } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                renderTile((SDL_Point){event.button.x,event.button.y}, end);
+            }
             default:
                 break;
             }
         }
+        SDL_RenderPresent(renderer);
+        SDL_Delay(16);
     }
     
 
