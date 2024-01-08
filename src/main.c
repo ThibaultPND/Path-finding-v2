@@ -11,7 +11,7 @@ gcc -o prog -Iinclude -Iinclude/SDL2 src/*.cpp -Llib -lSDL2main -lSDL2 -static -
 #include <Project.h>
 #include <SDL2/SDL.h>
 #include "TxUtils.h"
-
+#include "nodes.h"
 
 int main(int argc, char* argv[]) {
     printf("Debut du programme...\n\n");
@@ -39,13 +39,21 @@ int main(int argc, char* argv[]) {
     renderEmptyGrid();
     SDL_RenderPresent(renderer);
     
-    tileState_t tab[GRID_SIZE][GRID_SIZE];
+    node_t tab[GRID_SIZE][GRID_SIZE];
     for (int i = 0; i < GRID_SIZE; i++){
         for (int j = 0; j < GRID_SIZE; j++){
-            tab[i][j] = none;
+            tab[i][j].f_cost = -1;
+            tab[i][j].position = (SDL_Point){.x = j,.y = i};
+            tab[i][j].state = none;
         }
     }
-    
+
+    node_t start_node = {
+        .f_cost = -1,
+    };
+    node_t end_node = {
+        .f_cost = -1,
+    };
 
     // Programme
     SDL_bool programLaunched = SDL_TRUE;
@@ -60,16 +68,39 @@ int main(int argc, char* argv[]) {
                 break;
             case  SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    setTileAs(tab, (SDL_Point){event.button.x,event.button.y}, start);
+                    start_node = setTile(
+                        tab, 
+                        (SDL_Point){event.button.x,event.button.y},
+                        start
+                    );
                     renderGrid(tab);
                     
                 } else if (event.button.button == SDL_BUTTON_RIGHT) {
-                    setTileAs(tab, (SDL_Point){event.button.x,event.button.y}, end);
+                    end_node = setTile(
+                        tab, 
+                        (SDL_Point){event.button.x,event.button.y},
+                        end
+                    );
                     renderGrid(tab);
-                    
+
                 }else if (event.button.button == SDL_BUTTON_MIDDLE) {
-                    setTileAs(tab, (SDL_Point){event.button.x,event.button.y}, wall);
+                    setTile(
+                        tab, 
+                        (SDL_Point){event.button.x,event.button.y},
+                        wall
+                    );
                     renderGrid(tab);
+                }
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_SPACE:
+                    findWay(tab, start_node, end_node);
+                    renderGrid(tab);
+                    break;
+                
+                default:
+                    break;
                 }
             default: break;
             }

@@ -15,6 +15,7 @@ set(SOURCES
     src/main.c
     src/project.c
     src/TxUtils.c
+    src/nodes.c
 )
 
 # Création de l'exécutable

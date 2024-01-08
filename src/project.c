@@ -1,4 +1,4 @@
-#include"Project.h"
+#include "Project.h"
 
 SDL_Renderer *renderer = NULL;
 SDL_Window *window = NULL;
@@ -34,38 +34,49 @@ SDL_Point PositionInTheGrid(){
 }
 
 
-int resetAllTileAs(tileState_t tab[GRID_SIZE][GRID_SIZE], tileState_t state){
+int resetAllTileAs(node_t tab[GRID_SIZE][GRID_SIZE], tileState_t state){
     int count = 0;
 
     for (int i = 0; i < GRID_SIZE; i++)
         for (int j = 0; j < GRID_SIZE; j++)
-            if (tab[i][j] == state)
+            if (tab[i][j].state == state)
             {
-                tab[i][j] = none;
+                tab[i][j].state = none;
+                tab[i][j].parent = NULL;
                 count++;
             }
     return count;
 }
 
-void setTileAs(tileState_t tab[GRID_SIZE][GRID_SIZE], SDL_Point position, tileState_t state){
+node_t setTile(node_t tab[GRID_SIZE][GRID_SIZE], SDL_Point position, tileState_t state){
     position.x = position.x/10;
     position.y = position.y/10;
 
-    resetAllTileAs(tab, state);
+    if (state != wall && state != none && state != path)
+    {
+        resetAllTileAs(tab, state);
+    }
 
-    tab[position.y][position.x] = state;
+    tab[position.y][position.x].state = state;
+
+    return (node_t){
+        .f_cost = -1,
+        .parent = NULL,
+        .position = position,
+        .state = state
+    };
 }
 
-void renderGrid(tileState_t tab[GRID_SIZE][GRID_SIZE]) {
+void renderGrid(node_t tab[GRID_SIZE][GRID_SIZE]) {
     renderEmptyGrid();
 
     for (int i = 0; i < GRID_SIZE; i++)
         for (int j = 0; j < GRID_SIZE; j++){
-            if (tab[i][j] == none){
+            if (tab[i][j].state == none){
                 continue;
             }
             
-            switch (tab[i][j])
+            switch (tab[i][j].state)
             {
             case start:
                 SDL_SetRenderDrawColor(renderer, 0,255,0,255);
@@ -75,6 +86,9 @@ void renderGrid(tileState_t tab[GRID_SIZE][GRID_SIZE]) {
                 break;
             case path:
                 SDL_SetRenderDrawColor(renderer, 255,128,0,255);
+                break;
+            case wall:
+                SDL_SetRenderDrawColor(renderer, 0,0,0,255);
                 break;
             }
             SDL_Rect square = {
