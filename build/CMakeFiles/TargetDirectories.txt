@@ -1,3 +1,0 @@
-C:/Users/SN2/Documents/GitHub/Path-finding-v2/build/CMakeFiles/prog.dir
-C:/Users/SN2/Documents/GitHub/Path-finding-v2/build/CMakeFiles/edit_cache.dir
-C:/Users/SN2/Documents/GitHub/Path-finding-v2/build/CMakeFiles/rebuild_cache.dir
