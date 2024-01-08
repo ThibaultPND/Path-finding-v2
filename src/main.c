@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
     // Initialisation
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         // Erreur init SDL.
+        fprintf(stderr, "Erreur lors de l'initalisation de SDL\n");
     }
 
     window = SDL_CreateWindow("MonProgramme", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, LARGEUR_FENETRE, HAUTEUR_FENETRE, 0);
@@ -37,6 +38,14 @@ int main(int argc, char* argv[]) {
 
     renderEmptyGrid();
     SDL_RenderPresent(renderer);
+    
+    tileState_t tab[GRID_SIZE][GRID_SIZE];
+    for (int i = 0; i < GRID_SIZE; i++){
+        for (int j = 0; j < GRID_SIZE; j++){
+            tab[i][j] = none;
+        }
+    }
+    
 
     // Programme
     SDL_bool programLaunched = SDL_TRUE;
@@ -50,15 +59,19 @@ int main(int argc, char* argv[]) {
                 programLaunched = SDL_FALSE;
                 break;
             case  SDL_MOUSEBUTTONDOWN:
-            if (event.button.button == SDL_BUTTON_LEFT) {
-
-                renderTile((SDL_Point){event.button.x,event.button.y}, path);
-                printf("yo\n");
-            } else if (event.button.button == SDL_BUTTON_RIGHT) {
-                renderTile((SDL_Point){event.button.x,event.button.y}, end);
-            }
-            default:
-                break;
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    setTileAs(tab, (SDL_Point){event.button.x,event.button.y}, start);
+                    renderGrid(tab);
+                    
+                } else if (event.button.button == SDL_BUTTON_RIGHT) {
+                    setTileAs(tab, (SDL_Point){event.button.x,event.button.y}, end);
+                    renderGrid(tab);
+                    
+                }else if (event.button.button == SDL_BUTTON_MIDDLE) {
+                    setTileAs(tab, (SDL_Point){event.button.x,event.button.y}, wall);
+                    renderGrid(tab);
+                }
+            default: break;
             }
         }
         SDL_RenderPresent(renderer);

@@ -17,14 +17,27 @@ typedef enum tileState{
     end,
     none,
     path,
+    wall,
 }tileState_t;
+
+typedef struct nodes{
+    // Position
+    int pos_x;
+    int pos_y;
+
+    // Dst from end
+    int f_cost;
+
+    // Generator of this node.
+    struct nodes *previous;
+}node_t;
 
 extern SDL_Renderer *renderer;
 extern SDL_Window *window;
 
 void renderEmptyGrid(); // 80x80
-void renderTile(SDL_Point position,tileState_t state);
-
+void setTileAs(tileState_t tab[GRID_SIZE][GRID_SIZE], SDL_Point position,tileState_t state);
+void renderGrid(tileState_t tab[GRID_SIZE][GRID_SIZE]);
 
 
 #endif // __PROJECT_H__

@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+build/*
+build/.cmake/api/v1/reply/cache-v2-4db5f96319b7db97d331.json

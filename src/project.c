@@ -33,31 +33,56 @@ SDL_Point PositionInTheGrid(){
     return (SDL_Point){mouse_x/GRID_SIZE, mouse_y/GRID_SIZE};
 }
 
-void renderTile(SDL_Point position, tileState_t state){
-    position.x -= position.x%TILE_SIZE;
-    position.y -= position.y%TILE_SIZE;
 
-    switch (state)
-    {
-    case start:
-        SDL_SetRenderDrawColor(renderer, 0,255,0,255);
-        break;
-    case end:
-        SDL_SetRenderDrawColor(renderer, 255,0,0,255);
-        break;
-    case path:
-        SDL_SetRenderDrawColor(renderer, 255,128,0,255);
-        break;
-    case none:
-        SDL_SetRenderDrawColor(renderer, 255,255,255,255);
-        break;
-    }
-    SDL_Rect square = {
-        .h = TILE_SIZE,
-        .w = TILE_SIZE,
-        .x = position.x,
-        .y = position.y
-    };
-    SDL_RenderFillRect(renderer, &square);
-    printf("yolo\n");
+int resetAllTileAs(tileState_t tab[GRID_SIZE][GRID_SIZE], tileState_t state){
+    int count = 0;
+
+    for (int i = 0; i < GRID_SIZE; i++)
+        for (int j = 0; j < GRID_SIZE; j++)
+            if (tab[i][j] == state)
+            {
+                tab[i][j] = none;
+                count++;
+            }
+    return count;
+}
+
+void setTileAs(tileState_t tab[GRID_SIZE][GRID_SIZE], SDL_Point position, tileState_t state){
+    position.x = position.x/10;
+    position.y = position.y/10;
+
+    resetAllTileAs(tab, state);
+
+    tab[position.y][position.x] = state;
+}
+
+void renderGrid(tileState_t tab[GRID_SIZE][GRID_SIZE]) {
+    renderEmptyGrid();
+
+    for (int i = 0; i < GRID_SIZE; i++)
+        for (int j = 0; j < GRID_SIZE; j++){
+            if (tab[i][j] == none){
+                continue;
+            }
+            
+            switch (tab[i][j])
+            {
+            case start:
+                SDL_SetRenderDrawColor(renderer, 0,255,0,255);
+                break;
+            case end:
+                SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+                break;
+            case path:
+                SDL_SetRenderDrawColor(renderer, 255,128,0,255);
+                break;
+            }
+            SDL_Rect square = {
+                .h = TILE_SIZE,
+                .w = TILE_SIZE,
+                .x = j*10,
+                .y = i*10
+            };
+            SDL_RenderFillRect(renderer, &square);
+        } 
 }
